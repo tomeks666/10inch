@@ -1,0 +1,45 @@
+# diff all defaults
+
+# version
+# Betaflight / OMNIBUSF4SD (OBSD) 4.1.1 Nov 15 2019 / 12:42:34 (1e5e3d369) MSP API: 1.42
+
+# start the command batch
+batch start
+
+# reset configuration to default settings
+defaults nosave
+
+board_name OMNIBUSF4SD
+mcu_id 003100433333471737373332
+signature 
+
+# master
+#set acc_calibration = 0,0,0
+set acc_calibration = -239,-3,3
+
+profile 0
+
+profile 1
+
+profile 2
+
+# restore original profile selection
+profile 0
+
+rateprofile 0
+
+rateprofile 1
+
+rateprofile 2
+
+rateprofile 3
+
+rateprofile 4
+
+rateprofile 5
+
+# restore original rateprofile selection
+rateprofile 0
+
+# save configuration
+save

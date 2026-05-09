@@ -1,0 +1,59 @@
+# diff all defaults
+
+# version
+# Betaflight / STM32F405 (S405) 4.5.1 Sep  7 2024 / 19:07:32 (77d01ba3b) MSP API: 1.46
+# config rev: ce71657
+
+# start the command batch
+batch start
+
+# reset configuration to default settings
+defaults nosave
+
+board_name OMNIBUSF4SD
+manufacturer_id AIRB
+mcu_id 003100433333471737373332
+signature 
+#feature -TELEMETRY
+#feature -OSD
+
+# feature
+feature TELEMETRY
+feature OSD
+
+# serial
+#serial 5 0 115200 57600 0 115200
+serial 5 64 115200 57600 0 115200
+
+# master
+#set acc_calibration = 0,0,0,0
+set acc_calibration = -50,6,-9,1
+#set serialrx_provider = CRSF
+set serialrx_provider = SBUS
+#set osd_canvas_height = 16
+set osd_canvas_height = 13
+
+profile 0
+
+profile 1
+
+profile 2
+
+profile 3
+
+# restore original profile selection
+profile 0
+
+rateprofile 0
+
+rateprofile 1
+
+rateprofile 2
+
+rateprofile 3
+
+# restore original rateprofile selection
+rateprofile 0
+
+# save configuration
+save
