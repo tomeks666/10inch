@@ -208,11 +208,14 @@ local function update()
         end
     end
 
-    -- ── Explicitly signal no-data after 1s without a valid measurement ───────
-    -- Prevents stale distance persisting in MP and ArduPilot EKF
-    if rngfnd_backend and last_ok_ms > 0 and (now_ms - last_ok_ms) > 1000 then
-        rngfnd_backend:handle_script_msg(0)   -- 0m is below MIN_CM, ArduPilot rejects it
-        last_ok_ms = now_ms                   -- reset so we send this only once per second
+    -- ── Keepalive: signal OutOfRangeLow when no valid measurement ────────────
+    -- 4.99m < MIN_CM (5.0m) → status OutOfRangeLow → prearm_healthy() passes.
+    -- AP_RANGEFINDER_LUA_TIMEOUT_MS = 500ms: if last_reading_ms is older than
+    -- 500ms, the backend resets to NoData which blocks arming.  Must call
+    -- handle_script_msg more frequently than that — 200ms gives safe margin.
+    if rngfnd_backend and (now_ms - last_ok_ms) > 200 then
+        rngfnd_backend:handle_script_msg(0.02)  -- 2cm = OutOfRangeLow
+        last_ok_ms = now_ms
     end
 
     -- ── Periodic status report (every LOG_INTERVAL ms) ───────────────────────
