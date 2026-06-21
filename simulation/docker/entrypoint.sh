@@ -27,6 +27,9 @@ exec python3 Tools/autotest/sim_vehicle.py \
     --no-mavproxy \
     --no-rebuild \
     --speedup "${SPEEDUP}" \
+    --lat=52.0922146 \
+    --lon=21.1249079 \
+    --alt=100 \
     ${PARAM_ARG} \
     -A "--serial1=tcp:5761" \
     "$@"

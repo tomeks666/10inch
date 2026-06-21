@@ -25,6 +25,7 @@ services:
       - "5761:5761"   # SERIAL1 / LTE link
     volumes:
       - ./params:/params:ro
+      - ./docker/entrypoint.sh:/home/ardupilot/entrypoint.sh:ro
       - sitl-logs:/home/ardupilot/ardupilot/logs
     networks:
       - mavnet
