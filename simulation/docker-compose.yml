@@ -1,0 +1,61 @@
+services:
+
+  # ── ArduCopter SITL ──────────────────────────────────────────────────────────
+  # Two independent TCP MAVLink ports, no MAVProxy, so failsafe behaviour is
+  # governed purely by the test client connections.
+  #
+  #   Port 5760 → SERIAL0 / "ELRS link"  (uartA inside arducopter)
+  #   Port 5761 → SERIAL1 / "LTE link"   (uartB inside arducopter)
+  #
+  # Build:    docker compose build
+  # Run:      docker compose up sitl
+  # One-shot: docker compose run --rm sitl --speedup 10
+  sitl:
+    build:
+      context: ./docker
+      args:
+        ARDUPILOT_TAG: ${ARDUPILOT_TAG:-Copter-4.6.3}
+    image: ardupilot-sitl:${ARDUPILOT_TAG:-Copter-4.6.3}
+    container_name: ardupilot-sitl
+    environment:
+      VEHICLE: ArduCopter
+      SPEEDUP: "1"
+    ports:
+      - "5760:5760"   # SERIAL0 / ELRS link
+      - "5761:5761"   # SERIAL1 / LTE link
+    volumes:
+      - ./params:/params:ro
+      - sitl-logs:/home/ardupilot/ardupilot/logs
+    networks:
+      - mavnet
+    restart: "no"
+
+  # ── Test runner ───────────────────────────────────────────────────────────────
+  # Runs the pytest suite against the live SITL container.
+  # Usage: docker compose run --rm tests
+  #   or for a single test file:
+  #        docker compose run --rm tests pytest test_gcs_failsafe.py -v
+  tests:
+    build:
+      context: ./scripts
+    image: ardupilot-sitl-tests:latest
+    container_name: ardupilot-sitl-tests
+    environment:
+      SITL_HOST: sitl
+      ELRS_PORT: "5760"
+      LTE_PORT: "5761"
+    volumes:
+      - ./scripts:/tests:ro    # mount live for quick iteration without rebuild
+    networks:
+      - mavnet
+    depends_on:
+      - sitl
+    profiles:
+      - test    # only started when: docker compose --profile test up
+
+networks:
+  mavnet:
+    driver: bridge
+
+volumes:
+  sitl-logs:

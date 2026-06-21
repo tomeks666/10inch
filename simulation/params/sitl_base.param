@@ -1,0 +1,44 @@
+# Tier 1 SITL base parameters
+# Loaded at startup via --add-param-file
+# Reference: ardupilot-lte-elrs-test-plan.md §4
+
+# ── GCS failsafe ─────────────────────────────────────────────────────────────
+# 0=disabled, 1=RTL, 2=RTL only if armed, 3=Smartrth only if armed, 4=Land
+FS_GCS_ENABLE,2
+# Seconds with no GCS heartbeat before failsafe triggers (default 5)
+FS_GCS_TIMEOUT,5
+
+# ── RC / throttle failsafe ────────────────────────────────────────────────────
+# 0=disabled, 1=Land, 2=RTL
+FS_THR_ENABLE,2
+# PWM threshold below which RC is considered lost (us)
+FS_THR_VALUE,975
+
+# ── EKF failsafe ─────────────────────────────────────────────────────────────
+# 0=disabled, 1=Land, 2=AltHold, 3=Land even if landed
+FS_EKF_ACTION,2
+
+# ── GCS identity ─────────────────────────────────────────────────────────────
+# In ArduPilot master (2024+), the parameter was renamed from SYSID_MYGCS to
+# MAV_GCS_SYSID. 255 is the conventional GCS system ID for MAVProxy/MissionPlanner.
+# Including both names so the file works on older and newer builds.
+MAV_GCS_SYSID,255
+SYSID_MYGCS,255
+
+# ── SERIAL1 (LTE / RPi link) ─────────────────────────────────────────────────
+# Must be set here so arducopter activates MAVLink2 on uartB at startup.
+# SERIAL0 defaults to MAVLink2 in SITL without explicit config.
+SERIAL1_PROTOCOL,2
+SERIAL1_BAUD,115
+
+# ── Arming ────────────────────────────────────────────────────────────────────
+# Skip preflight checks so we can arm quickly in tests (no GPS lock needed).
+# ARMING_CHECK was the old name; recent ArduPilot master uses ARMING_SKIPCHK.
+# ARMING_SKIPCHK bitmask: 0xFFFF skips ALL checks.
+ARMING_CHECK,0
+ARMING_SKIPCHK,65535
+
+# ── Frame ─────────────────────────────────────────────────────────────────────
+# Match the real build: quadcopter X-frame
+FRAME_CLASS,1
+FRAME_TYPE,1
